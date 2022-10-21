@@ -233,9 +233,6 @@ module.exports={
     login:async(req,res)=>{
         try {
             let {email,password}=req.body
-            console.log(email)
-            console.log('==========================')
-
             let loginUser = await dbQuery(`Select u.idusers, u.fullname, u.username,u.bio, u.email, u.images, u.status_id, s.status from users u JOIN status s on u.status_id=s.idstatus
             WHERE ${dbConf.escape(email).includes('@') && dbConf.escape(email).includes('.co') ?`u.email = ${dbConf.escape(email)}`: 
             `u.username = ${dbConf.escape(email)}`} 
@@ -288,6 +285,7 @@ module.exports={
     
     keepLogin:async (req,res)=>{
         try {
+          console.log(req.dataToken)
             let resultsUser = await dbQuery(`Select u.idusers, u.fullname, u.username, u.bio, u.email, u.images, u.status_id, s.status from users u JOIN status s on u.status_id=s.idstatus
             WHERE u.idusers=${dbConf.escape(req.dataToken.idusers)}`)
 

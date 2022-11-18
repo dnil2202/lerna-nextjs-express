@@ -4,8 +4,22 @@ import { API_URL } from '../../helper'
 import Navbar from '../component/Navbar'
 import { BsThreeDots, BsHeart, BsChat } from 'react-icons/bs';
 import { RiShareForwardLine } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
+import {useRouter} from 'next/router';
+import Link from 'next/link'
 
 const HomePage = (props) => {
+  const route = useRouter()
+  const {id,fullname,username,avatar,status} = useSelector((state)=>{
+    return{
+      id : state.userReducer.idusers,
+      fullname : state.userReducer.fullname,
+      username : state.userReducer.username,
+      avatar : state.userReducer.images,
+      status : state.userReducer.status,
+    }
+  })
+
 
   const printDataPosting = () => {
     return props.posting.map((val,idx)=>{
@@ -48,24 +62,25 @@ const HomePage = (props) => {
                   <p className='text-sm leading-[18px] text-[#262626] ml-2'>{val.caption}</p>
                 </div>
               </div>
-              <p className='text-sm leading-[18px] text-[#8e8e8e] my-3'>
-                {
-                  val.comment ?
-                    <p>View {val.comment.length} Comment</p>
-                  :
-                    <p>View Detail</p>
-                }
-              </p>
+              <Link href={`profile/detail?idposting=${val.idposting}`}>
+                <div>
+                  {
+                    val.comment ?
+                      <p className='text-sm leading-[18px] text-[#8e8e8e] my-3'>View {val.comment.length} Comment</p>
+                    :
+                      <p className='text-sm leading-[18px] text-[#8e8e8e] my-3'>View Detail</p>
+                  }
+                </div>
+              </Link>
               <div>
                 {
                   val.comment &&
                   val.comment.map ((v,i)=>{
                     if(i<2){
                       return (
-                        <div >
+                        <div key={i} >
                           <div className=''>
-                            <p className='text-sm leading-[18px] font-semibold pt-1'>{v.user_name_comment}<span className='text-sm leading-[18px] text-[#262626] ml-2'>{v.comment}</span></p>
-
+                            <p className='text-sm leading-[18px] font-semibold pt-1'>{v.user_name_comment}<a className='text-sm leading-[18px] font-normal text-[#262626] ml-2'>{v.comment}</a></p>
                           </div>
                         </div>
                       )
@@ -90,19 +105,30 @@ const HomePage = (props) => {
   
   return (
     <div>
+
       <Navbar/>
       <div className='bg-[#FAFAFA] container mx-auto px-96 pt-5'>
-        {printDataPosting()}
+        <div className='grid grid-cols-3'>
+          <div className='col-span-2'>
+          {printDataPosting()}
+          </div>
+          <div className='h-16 w-80 mt-3 flex'>
+            <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png' className='h-16 w-16' onClick={()=>route.push('/profile')}/>
+            <div className='mt-2 ml-4'>
+              <p className='text-sm leading-[18px] font-semibold'>{fullname}</p>
+              <p className='text-sm leading-[18px] font-light'>{username}</p>
+            </div>
+          </div>
+        </div>
       </div>
-
     </div>
   )
 }
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   try {
     let res = await axios.get(API_URL+`/posting?page=1&pageSize=5`)
-    console.log(res.data.comment)
+    console.log(res)
       return {
         props:{
           posting : res.data

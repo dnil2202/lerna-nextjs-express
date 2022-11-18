@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
-import Layout from './component/layout';
 import { useDispatch} from 'react-redux'
 import { loginAction } from '../action/userAction';
 import  {useRouter } from 'next/router'

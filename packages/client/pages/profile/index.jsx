@@ -57,7 +57,7 @@ const printDataPosting = () =>{
   return postingUser.map((val)=>{
     return(
       <Link href={`profile/detail?idposting=${val.idposting}`}>
-        <img src={API_URL+val.images} className='h-[293px] w-[935px] mt-10'/>
+        <img src={API_URL+val.images} className='h-[293px] w-[935px] mt-10 shadow-lg'/>
       </Link>
     )
   })
@@ -66,7 +66,7 @@ const printDataLike = () =>{
   return postingLike.map((val)=>{
     return(
       <Link href={`profile/detail?idposting=${val.idposting}`}>
-        <img src={API_URL+val.images} className='h-[293px] w-[935px] mt-10'/>
+        <img src={API_URL+val.images} className='h-[293px] w-[935px] mt-10 shadow-lg'/>
       </Link>
     )
   })
@@ -81,7 +81,7 @@ const printDataLike = () =>{
         <link rel='icon' href='/favicon.ico' />
       </Head>
         <Navbar/>
-            <div className='container mx-auto px-96 pt-5'>
+            <div className='container mx-auto px-96 pt-5 py-20'>
                 <div className='grid grid-cols-2'>
                   <div className='flex justify-center'>
                     <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png' className='h-[150px] w-[150px]'/>
@@ -100,10 +100,10 @@ const printDataLike = () =>{
                   <Tab className={({ selected })=> classNames('w-1/3 mx-4 py-5' ,selected && 'border-2 border-b-0 border-r-0 border-l-0   border-black font-bold')}>Liked</Tab>
                 </Tab.List>
                 <Tab.Panels>
-                  <Tab.Panel className='grid grid-cols-3'>
+                  <Tab.Panel className='grid grid-cols-3 gap-4'>
                     {printDataPosting()}
                   </Tab.Panel>
-                  <Tab.Panel className='grid grid-cols-3'>
+                  <Tab.Panel className='grid grid-cols-3 gap-4'>
                     {printDataLike()}
                   </Tab.Panel>
                 </Tab.Panels>

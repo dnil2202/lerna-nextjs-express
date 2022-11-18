@@ -33,7 +33,7 @@ const detail = (props) => {
         <div className='bg-[#FAFAFA] container mx-auto px-72 py-5'>
             <div className='h-[600px] w-[935px] border border-slate-200 grid grid-cols-3'>
                 <div className='col-span-2'>
-                    <img src={API_URL +images} className='w-full h-full' />
+                    <img src={API_URL +images} className='w-full h-[598px]' />
                 </div>
                 <div className='shadow-lg '>
                         <div className='h-[60px] py-2 border px-5 '>

@@ -6,11 +6,14 @@ import { useDispatch } from 'react-redux';
 import { API_URL } from '../../helper';
 import { loginAction}  from '../../action/userAction';
 import Link from 'next/link';
+import Dropdown from './Dropdown';
+import { useState } from 'react';
 
 
-const Navbar = () => {
+const Navbar = (props) => {
 
     const dispatch = useDispatch()
+    const [dropdown,setDropdown]=useState(false)
 
     const keepLogin=()=>{
       let sosmed = localStorage.getItem('guild')
@@ -57,8 +60,13 @@ return (
                       <Link href='/home'>
                         <AiFillHome size={24}/>
                       </Link>
-                        <AiFillPlusCircle size={24}/>
-                        <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png' className='h-7'/>
+                        <AiFillPlusCircle size={24} onClick={props.onClickOpenModal}/>
+                        <div className='relative'>
+                          <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png' className='h-7' onClick={()=>setDropdown(!dropdown)}/>
+                          <div className={dropdown?'absolute top-12 left-2':'hidden'}>
+                            <Dropdown/>
+                          </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,8 @@ import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import axios from 'axios';
 import { API_URL } from '../../helper';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
     const [visible, setVisible]=useState('password')
@@ -38,12 +40,30 @@ const Register = () => {
                     console.log('data token',res.data)
                     if(res.data.success){
                         // navigate('/',{replace:true})
-                        alert('sukses')
+                        toast.success('Success please verified your account', {
+                            position: "top-center",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            });
                     }
                     setIsLoading(false)
                 }).catch((err)=>{
                     setIsLoading(false)
-                    alert('gagal')
+                    toast.error('Cek your data', {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        });
                 })
     }
 

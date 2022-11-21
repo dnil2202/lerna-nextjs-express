@@ -7,6 +7,8 @@ import  {useRouter } from 'next/router'
 import { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../helper';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Home() {
@@ -31,23 +33,30 @@ export default function Home() {
     })
     .then((res)=>{
       setIsLoading(false)
-      console.log(res.data)
       localStorage.setItem('guild', res.data.token)
       delete (res.data.token)
       dispatch(loginAction(res.data))
       router.push('/home')
-      alert('sukses')
     }).catch((err)=>{
       setIsLoading(false)
       console.log(err)
-      alert(err)
+      toast.error('Please cek your email and password', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
     })
 }
   
   
   return (
       <div>
-        <div className='container mx-auto px-96 bg-[#FAFAFA] '>
+        <div className='container mx-auto px-96 bg-[#FAFAFA]' style={{height:'100vh'}}>
           <div className='pt-10'>
             <div className='grid grid-cols-2'>
               <Image
@@ -59,7 +68,7 @@ export default function Home() {
               />
               <div className='border border-slate-200 bg-white mx-4 h-[394px]'>
                 <div className='my-10'>
-                  <div className='font-Fuzy font-normal text-5xl text-center mb-10'>
+                  <div className='font-Fuzy font-normal text-5xl text-center mb-10 cursor-pointer'>
                     Guild              
                   </div>
                   <form className=' w-full '>
@@ -70,7 +79,7 @@ export default function Home() {
                       <input className='h-9 w-64 border border-slate-400 bg-[#FAFAFA] focus:outline focus:outline-offset-0 focus:outline-gray-200 placeholder:text-start pl-2 text-xs' onChange={(e)=>setPassword(e.target.value)} placeholder='Password'/>
                     </div>
                     <div className='flex justify-center'>
-                      <button className='w-64 py-1 bg-sky-200 rounded-md text-white font-bold' onClick={onLogin}>Log in</button>
+                      <button className={`w-64 py-1 ${password.length>0 && email.length>0?'bg-sky-400':'bg-sky-200'} rounded-md text-white font-bold disabled:cursor-not-allowed`} onClick={onLogin} disabled={password.length>0 && email.length>0?false:true}>Log in</button>
                     </div>
                   </form>
                   <div className='relative py-4'>
@@ -91,7 +100,7 @@ export default function Home() {
                 </div>
               <div className='h-16 border-[1px] border-[#dbdbdb] bg-white'>
                 <Link href='/register'>
-                  <p className='my-5 text-center text-sm leading-[18px]'>Dont have an account?<span className='ml-1 text-sky-400 font-bold'>Sign up </span></p>
+                  <p className='my-5 text-center text-sm leading-[18px]'>Dont have an account?<span className='ml-1 text-sky-400 font-bold cursor-pointer'>Sign up </span></p>
                 </Link>
               </div>
               </div>
@@ -100,8 +109,8 @@ export default function Home() {
         </div>
         {isLoading&&
         <p className='text-5xl font-bold'>Loading................</p>
-        
         }
+        <ToastContainer/>
       </div>
   )
 }

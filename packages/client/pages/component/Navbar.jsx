@@ -47,7 +47,7 @@ const Navbar = (props) => {
 
     const findPeople = (e) =>{
       if(e.key === 'Enter'){
-        route.push(`/profile/user?${searchUser}`)
+        route.push(`/username/?${searchUser}`)
       }
     }
 return (

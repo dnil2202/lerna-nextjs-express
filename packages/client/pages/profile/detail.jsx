@@ -2,13 +2,65 @@ import axios from 'axios'
 import React from 'react'
 import { API_URL } from '../../helper'
 import Navbar from '../component/Navbar';
-import { BsThreeDots, BsHeart, BsChat } from 'react-icons/bs';
+import { BsThreeDots, BsHeart, BsChat, BsHeartFill } from 'react-icons/bs';
 import { RiShareForwardLine  } from 'react-icons/ri';
 import Head from 'next/head'
+import { useSelector } from 'react-redux';
+import {useRouter} from 'next/router';
+import { useState } from 'react';
 
 const detail = (props) => {
     const {idposting, images, add_date, avatar,user_name_post,caption}= props.detail
-  return (
+    const route = useRouter()
+
+    const {id} = useSelector((state)=>{
+        return{
+        id : state.userReducer.idusers,
+        }
+    })
+
+    const [comment,setComment]=useState('')
+
+
+    const submitLike =(idPost)=>{
+        let idLike = parseInt(idPost)
+        console.log(idLike)
+        axios.post(API_URL+'/like',{
+            postId:idLike,
+            userId:id,
+        }).then((res)=>{
+            route.push(`/profile/detail?idposting=${idposting}`)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+    
+    const deleteLike =(idLike)=>{
+          let id = parseInt(idLike)
+        axios.delete(API_URL+`/like/${id}`)
+        .then((res)=>{
+            route.push(`/profile/detail?idposting=${idposting}`)
+          console.log(res)
+        }).catch((err)=>{
+          console.log(err)
+        })
+    }
+
+    const submitComment =()=>{
+        axios.post(API_URL + '/comment',{
+        comment:comment,
+        user_comment_id:id,
+        posting_id:idposting
+        }).then((res)=>{
+        route.push(`/profile/detail?idposting=${idposting}`)
+        setComment('')
+        }).catch((err)=>{
+        console.log(err)
+        })
+    }
+
+    let addLike
+return (
     <div>
     <Head>
         <title>posting from {user_name_post}||Guild</title>
@@ -70,7 +122,21 @@ const detail = (props) => {
                         </div>
                         <div className='h-10 flex px-5'>
                             <div className=' flex justify-around w-32 '>
-                                <BsHeart className='h-6 w-6 mt-[2px]'/>
+                            {
+                                props.detail.likes &&
+                                props.detail.likes.map((v)=>{
+                                if(v.idusers === id){
+                                    addLike = v
+                                }
+                                })
+                            }
+                            {
+                            addLike ?(
+                                <BsHeartFill className='h-6 w-6 mt-[2px]' onClick={()=>{deleteLike(addLike.id)}}/>
+                                ):(
+                                <BsHeart className='h-6 w-6 mt-[2px]' onClick={()=>{submitLike(idposting)}}/>
+                                )
+                            }
                                 <BsChat className='h-6 w-6 '/>
                                 <RiShareForwardLine className='h-6 w-6'/>
                             </div>
@@ -85,8 +151,8 @@ const detail = (props) => {
                         </div>
                         <div className='border border-slate-200 border-b-0 px-3 mt-3'>
                             <div className=' flex'>
-                                <input className='mt-2 h-8 w-[441px] bg-[#FAFAFA] focus:outline-none' placeholder='Add a comment'/>
-                                <button className='h-[15px] w-7 my-4 text-sky-500'> Post</button>
+                                <input className='mt-2 h-8 w-[441px] bg-[#FAFAFA] focus:outline-none' placeholder='Add a comment' value={comment} onChange={(e)=>setComment(e.target.value)}/>
+                                <button className='h-[15px] w-7 my-4 text-sky-500' onClick={submitComment}> Post</button>
                             </div>
                         </div>
                 </div>
@@ -106,7 +172,7 @@ export const getServerSideProps = async (context) =>{
             }
         }
     } catch (error) {
-        
+        console.log(error)
     }
 }
 

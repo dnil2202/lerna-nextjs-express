@@ -155,6 +155,21 @@ module.exports = {
             console.log(error)
             
         }
+    },
+
+    getDataPostingByUserName:async (req,res)=>{
+        try {
+            let profileUser = await dbQuery(`select idusers, fullname, username, images as avatar, email from users where username =${dbConf.escape(req.params.username)}`)
+            let resultPostProfile = await dbQuery(`select  p.idposting, p.images, p.caption,p.add_date, x.username as user_name_post, x.images as avatar
+            from newposting p left join users x on x.idusers = p.user_id where x.username = ${dbConf.escape(req.params.username)}`)
+            res.status(200).send({
+                ...profileUser[0],
+                posting:resultPostProfile
+            })
+        } catch (error) {
+            console.log(error)
+            
+        }
     }
     
 

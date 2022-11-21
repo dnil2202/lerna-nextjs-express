@@ -2,7 +2,7 @@ import React, {useState, useRef} from 'react'
 import axios from 'axios'
 import { API_URL } from '../../helper'
 import Navbar from '../component/Navbar'
-import { BsThreeDots, BsHeart, BsChat } from 'react-icons/bs';
+import { BsThreeDots, BsHeart, BsChat, BsHeartFill } from 'react-icons/bs';
 import { RiShareForwardLine } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import {useRouter} from 'next/router';
@@ -26,10 +26,85 @@ const HomePage = (props) => {
   const [toggle,setToggle]=useState(false)
   const [img,setImg]=useState('')
   const [caption,setCaption]=useState('')
+  const [comment,setComment]=useState({
+    name:'',
+    comment:''
+  })
+
+  const handleClick = () => {
+    hiddenFileInput.current.click();
+  };
+
+  const submitPosting = ()=>{
+    let formData = new FormData();
+    formData.append('data',JSON.stringify({
+      caption,
+      users_id:id
+    }))
+    formData.append('images',img)
+    axios.post(API_URL+`/posting`,formData).then((res)=>{
+      if(res.data.success){
+        alert('success')
+        setImg('')
+        setCaption('')
+        setToggle(false)
+        route.push('/home')
+      }
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+  }
+
+  const submitComment =(e)=>{
+    let idPosting = parseInt(e.target.value)
+    axios.post(API_URL + '/comment',{
+      comment:comment.comment,
+      user_comment_id:id,
+      posting_id:idPosting
+    }).then((res)=>{
+      if(res.data.success){
+        route.push('/home')
+        setComment({
+          name:'',
+          comment:''
+        })
+      }
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
+
+  const submitLike =(idposting)=>{
+    let idLike = parseInt(idposting)
+    console.log(idLike)
+      axios.post(API_URL+'/like',{
+        postId:idLike,
+        userId:id,
+      }).then((res)=>{
+        route.push('/home')
+        setFetchStatus(true)
+      }).catch((err)=>{
+        console.log(err)
+      })
+  }
+  
+  const deleteLike =(idLike)=>{
+      let id = parseInt(idLike)
+    axios.delete(API_URL+`/like/${id}`)
+    .then((res)=>{
+      route.push('/home')
+      console.log(res)
+      setFetchStatus(true)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
 
 
   const printDataPosting = () => {
     return props.posting.map((val,idx)=>{
+      let addLike
       return (
         <div key={val.idposting} >
           <div className='w-[470px] bg-white border border-slate-200 my-3'>
@@ -49,7 +124,20 @@ const HomePage = (props) => {
             </div>
             <div className='h-10 flex '>
               <div className='mt-1 flex justify-around w-32'>
-                <BsHeart className='h-6 w-6 mt-[2px]'/>
+                {
+                  val.likes.map((data)=>{
+                    if(data.idusers === id){
+                      addLike = data
+                    }
+                  })
+                }
+                {
+                  addLike ?(
+                    <BsHeartFill className='h-6 w-6 mt-[2px]' onClick={()=>{deleteLike(addLike.id)}}/>
+                    ):(
+                      <BsHeart className='h-6 w-6 mt-[2px]' onClick={()=>{submitLike(val.idposting)}}/>
+                      )
+                  }
                 <BsChat className='h-6 w-6 '/>
                 <RiShareForwardLine className='h-6 w-6'/>
               </div>
@@ -100,8 +188,8 @@ const HomePage = (props) => {
             </div>
               <div className='border border-slate-200 px-3'>
                 <div className='flex'>
-                  <input className='my-2 h-10 w-[441px] focus:outline-none' placeholder='Add a comment'/>
-                  <button className='h-[18px] w-7 my-4 text-sky-500'> Post</button>
+                  <input className='my-2 h-10 w-[441px] focus:outline-none' placeholder='Add a comment' onChange={(e)=>setComment({name: `comment-${val.idposting}`,comment: e.target.value})} name={`comment-${val.idposting}`}/>
+                  <button className={`h-[18px] w-7 my-4 text-sky-500 ${comment.comment.length>0&&'text-sky-700 font-bold'} disabled:cursor-not-allowed`} disabled={comment.comment.length>0?false:true} value={val.idposting} onClick={submitComment} > Post</button>
                 </div>
               </div>
           </div>
@@ -110,30 +198,7 @@ const HomePage = (props) => {
     })
   }
 
-  const handleClick = event => {
-    hiddenFileInput.current.click();
-  };
 
-  const submitPosting = ()=>{
-    let formData = new FormData();
-    formData.append('data',JSON.stringify({
-      caption,
-      users_id:id
-    }))
-    formData.append('images',img)
-    axios.post(API_URL+`/posting`,formData).then((res)=>{
-      if(res.data.success){
-        alert('success')
-        setImg('')
-        setCaption('')
-        setToggle(false)
-        route.push('/home')
-      }
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-  }
   
   return (
     <div className='absolute'>
@@ -146,7 +211,7 @@ const HomePage = (props) => {
           {printDataPosting()}
           </div>
           <div className='h-16 w-80 mt-3 flex'>
-            <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png' className='h-16 w-16' onClick={()=>route.push('/profile')}/>
+            <img src={avatar?API_URL + avatar:'https://cdn-icons-png.flaticon.com/512/149/149071.png'} className='h-16 w-16 rounded-full' onClick={()=>route.push('/profile')}/>
             <div className='mt-2 ml-4'>
               <p className='text-sm leading-[18px] font-semibold'>{fullname}</p>
               <p className='text-sm leading-[18px] font-light'>{username}</p>

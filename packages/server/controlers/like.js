@@ -56,5 +56,16 @@ module.exports={
         } catch (error) {
             console.log(error)
         }
+    },
+
+    getLikeDetailUserName : async(req,res)=>{
+        try {
+            let idUser= await dbQuery(`Select idusers from users where username = ${dbConf.escape(req.params.username)}`)
+            let resultsLike = await dbQuery(`Select u.idusers,u.username,u.images as avatar ,p.idposting,p.add_date,p.images,l.id,l.postId from users u JOIN likes l ON u.idusers=l.userId 
+                    JOIN newposting p ON p.idposting = l.postId WHERE l.userId =${idUser[0].idusers};`)
+            res.status(200).send(resultsLike)
+        } catch (error) {
+            console.log(error)
+        }
     }
 }

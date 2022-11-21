@@ -84,7 +84,7 @@ const printDataLike = () =>{
             <div className='container mx-auto px-96 pt-5 py-20'>
                 <div className='grid grid-cols-2'>
                   <div className='flex justify-center'>
-                    <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png' className='h-[150px] w-[150px]'/>
+                    <img src={avatar?API_URL + avatar:'https://cdn-icons-png.flaticon.com/512/149/149071.png'} className='h-[150px] w-[150px] rounded-full'/>
                   </div>
                   <div className='h-10 w-[613px]'>
                    <p className='text-[32px] font-extralight text-gray-600'>{username}</p>

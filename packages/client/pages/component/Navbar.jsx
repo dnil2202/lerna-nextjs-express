@@ -8,12 +8,15 @@ import { loginAction}  from '../../action/userAction';
 import Link from 'next/link';
 import Dropdown from './Dropdown';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 
 const Navbar = (props) => {
 
     const dispatch = useDispatch()
     const [dropdown,setDropdown]=useState(false)
+    const [searchUser,setSearchUser]=useState('')
+    const route = useRouter()
 
     const keepLogin=()=>{
       let sosmed = localStorage.getItem('guild')
@@ -42,6 +45,11 @@ const Navbar = (props) => {
       keepLogin()
     },[])
 
+    const findPeople = (e) =>{
+      if(e.key === 'Enter'){
+        route.push(`/profile/user?${searchUser}`)
+      }
+    }
 return (
     <div className='shadow-xl lg:container lg:mx-auto lg:px-80'>
         <div className='py-2 flex'>
@@ -51,8 +59,8 @@ return (
             </Link>
             </div>
             <div className='h-9 w-64 relative'>
-                <input placeholder='search' className='bg-slate-200 w-full h-9 rounded-md focus:outline-none pl-10'/>
-                <BiSearchAlt2 size={24} className='absolute top-2 left-1 fill-slate-500'/>
+                <input placeholder='search' className='bg-slate-200 w-full h-9 rounded-md focus:outline-none pl-10' onChange={(e)=>setSearchUser(e.target.value)} onKeyPress={findPeople}/>
+                <BiSearchAlt2 size={24} className='absolute top-2 left-1 fill-slate-500' />
             </div>
             <div className='h-9 w-[333px]'>
                 <div className='flex justify-end'>

@@ -4,6 +4,7 @@ const route = express.Router()
 
 route.get('/',likeController.getLike)
 route.get('/:id',likeController.getLikeDetailUser)
+route.get('/user/:username',likeController.getLikeDetailUserName)
 route.post('/',likeController.postLike)
 route.delete('/:id',likeController.deleteLike)
 route.patch('/:id',likeController.editLike)
